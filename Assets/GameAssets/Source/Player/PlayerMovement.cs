@@ -18,6 +18,10 @@ public class PlayerMovement : ObjectModel
         canMove = false;
     }
 
+    public void SetSpeed(float speed)
+    {
+        this.speed = speed;
+    }
     private void Update()
     {
         if (canMove)

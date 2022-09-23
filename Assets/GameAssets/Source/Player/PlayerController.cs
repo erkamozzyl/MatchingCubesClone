@@ -28,6 +28,37 @@ public class PlayerController : ControllerBaseModel
    {
       playerMovement.Stop();
    }
+   
+   private void Update()
+   {
+      if (Input.GetKeyDown(KeyCode.A))
+      {
+         RemoveCubes(1);
+      }
+      if (Input.GetKeyDown(KeyCode.B))
+      {
+         RemoveCubes(2);
+      }
+
+      if (feverMode)
+      {
+         OnFeverMode();
+      }
+      
+   }
+
+   private void OnFeverMode()
+   {
+      if (boostDuration > 0)
+      {
+         boostDuration -= Time.deltaTime;
+      }
+      else
+      {
+         feverMode = false;
+         playerMovement.SetSpeed(7);
+      }
+   }
 
    private void OnTriggerEnter(Collider other)
    {
@@ -51,11 +82,18 @@ public class PlayerController : ControllerBaseModel
       if (other.gameObject.CompareTag("SpeedBoost"))
       {
          var boost = other.gameObject.GetComponent<SpeedBoost>();
-         boostDuration = boost.duration;
-         
+         OnCollectSpeedBoost(boost);
       }
 
      
+   }
+
+   private void OnCollectSpeedBoost(SpeedBoost boost)
+   {
+      boost.OnCollect();
+      boostDuration = boost.duration;
+      feverMode = true;
+      playerMovement.SetSpeed(12f);
    }
 
    private void OnPassRandomGate(RandomGate gate)
@@ -103,7 +141,7 @@ public class PlayerController : ControllerBaseModel
             targetCube.Initialize();
             currentCubes.Remove(targetCube);
          }
-         CheckMatch();
+         MatchCheck();
       }
    }
    private void OnPassOrderGate(OrderGate gate)
@@ -147,24 +185,10 @@ public class PlayerController : ControllerBaseModel
             }
             targetCube.Initialize();
          }
-         CheckMatch();
+         MatchCheck();
       }
    }
-   private void Update()
-   {
-      if (Input.GetKeyDown(KeyCode.A))
-      {
-         CheckMatch();
-      }
-      if (Input.GetKeyDown(KeyCode.B))
-      {
-         for (int i = 0; i < cubes.Count; i++)
-         {
-            cubes[i].colorId = 0;
-            cubes[i].Initialize();
-         }
-      }
-   }
+  
 
    private void OnTriggerCube(Cube cube)
    {
@@ -176,13 +200,29 @@ public class PlayerController : ControllerBaseModel
          playerModel.AddVector3ToPosition(new Vector3(0, cube.heightOffset, 0));
          for (int i = 0; i < cubes.Count; i++)
          {
-            cubes[i].CollectScaleAnimation(i/15f);
+            cubes[i].ScaleAnimation(i/15f,1.5f);
          }
-         CheckMatch();
+         MatchCheck();
       }
    }
 
-   private void CheckMatch()
+   private void RemoveCubes(int count)
+   {
+      int removedCubeCounter = 0;
+      for (int j = cubes.Count - 1; j >= 0 ; j--)
+      {
+         if (removedCubeCounter < count)
+         {
+            cubes[j].ScaleAnimation(0,() =>
+            {
+               playerModel.AddVector3ToPosition(new Vector3(0, -1.5f, 0));
+            });
+            removedCubeCounter += 1;
+         }
+      }
+      cubes.RemoveRange(cubes.Count - count, count);
+   }
+   private void MatchCheck()
    {
       for (int i = 0; i < cubes.Count - 2; i++)
       {
@@ -193,20 +233,20 @@ public class PlayerController : ControllerBaseModel
             {
                for (int j = i; j < 3 + i; j++)
                {
-                  cubes[j].OnMatch((() =>
+                  cubes[j].ScaleAnimation(0,() =>
                   {
                      playerModel.AddVector3ToPosition(new Vector3(0, -1.5f, 0));
-                  }));
+                  });
                }
                cubes.RemoveRange(i, 3);
                for (int x = 0; x < cubes.Count; x++)
                {
                   if (i <= x)
                   {
-                     cubes[x].transform.localPosition += new Vector3(0,  3 * cubes[x].heightOffset, 0);
+                     cubes[x].AddVector3ToPosition( new Vector3(0,  3 * cubes[x].heightOffset, 0));
                   }
                }
-               CheckMatch();
+               MatchCheck();
             }
          }
       }

@@ -48,12 +48,15 @@ public class Cube : CollectableBaseModel
             canCollect = false;
         }
     }
-
-    public void OnMatch(Action onComplete)
+    public void AddVector3ToPosition(Vector3 position)
+    {
+        transform.localPosition += position;
+    }
+    public void ScaleAnimation(float value, Action onComplete)
     {
         transform.DOScale(1.7f, .2f).OnComplete(() =>
         {
-            transform.DOScale(0f, .4f).OnComplete(() =>
+            transform.DOScale(value, .4f).OnComplete(() =>
             {
                 onComplete?.Invoke();
                 gameObject.SetActive(false);
@@ -61,13 +64,13 @@ public class Cube : CollectableBaseModel
         });
     }
 
-    public void CollectScaleAnimation(float offsetTime)
+    public void ScaleAnimation(float offsetTime, float value)
     {
         DOVirtual.DelayedCall(offsetTime, () =>
         {
             transform.DOScale(1.7f, .2f).OnComplete(() =>
             {
-                transform.DOScale(1.5f, .2f);
+                transform.DOScale(value, .2f);
             });
         });
 
