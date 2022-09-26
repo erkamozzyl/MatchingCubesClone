@@ -4,5 +4,6 @@ using UnityEngine;
 
 public abstract class CollectableBaseModel : ObjectModel
 {
+    public bool canCollect;
     public abstract void OnCollect();
 }

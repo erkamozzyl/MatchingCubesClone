@@ -9,6 +9,8 @@ TagManager:
   - RandomGate
   - OrderGate
   - SpeedBoost
+  - CubeBlock
+  - FireGround
   layers:
   - Default
   - TransparentFX

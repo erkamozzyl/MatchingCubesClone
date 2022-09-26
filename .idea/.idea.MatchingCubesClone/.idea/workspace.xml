@@ -11,9 +11,11 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Obstacles/CubeBlock.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Collectables/RandomGate.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Collectables/SpeedBoost.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Collectables/Gate.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Obstacles/FireGround.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Collectables/OrderGate.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="2F7fAVmHTxjTQwCWF6ZCJiE9Jko" />
@@ -58,7 +60,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1663847901339</updated>
-      <workItem from="1663847911922" duration="25755000" />
+      <workItem from="1663847911922" duration="26354000" />
+      <workItem from="1664190546087" duration="6606000" />
     </task>
     <servers />
   </component>

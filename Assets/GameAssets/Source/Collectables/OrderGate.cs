@@ -6,6 +6,6 @@ public class OrderGate : Gate
 {
     public override void OnCollect()
     {
-        canPass = false;
+        canCollect = false;
     }
 }

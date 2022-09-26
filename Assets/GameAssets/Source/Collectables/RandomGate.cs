@@ -6,6 +6,6 @@ public class RandomGate : Gate
 {
     public override void OnCollect()
     {
-        canPass = false;
+        canCollect = false;
     }
 }

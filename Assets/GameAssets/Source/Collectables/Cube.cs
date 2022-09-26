@@ -8,7 +8,6 @@ using UnityEngine.Events;
 public class Cube : CollectableBaseModel
 {
     public int colorId;
-    public bool canCollect;
     public float heightOffset;
     [SerializeField] private Renderer renderer;
     [SerializeField] private List<Material> materials;

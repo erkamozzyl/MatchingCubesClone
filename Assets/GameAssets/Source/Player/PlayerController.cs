@@ -60,6 +60,15 @@ public class PlayerController : ControllerBaseModel
       }
    }
 
+   private void OnCollisionEnter(Collision other)
+   {
+      if (other.gameObject.CompareTag("Cube"))
+      {
+         var cube = other.gameObject.GetComponent<Cube>();
+         OnTriggerCube(cube);
+      }
+   }
+
    private void OnTriggerEnter(Collider other)
    {
       if (other.gameObject.CompareTag("Cube"))
@@ -84,21 +93,51 @@ public class PlayerController : ControllerBaseModel
          var boost = other.gameObject.GetComponent<SpeedBoost>();
          OnCollectSpeedBoost(boost);
       }
-
+      if (other.gameObject.CompareTag("FireGround"))
+      {
+         var fireGround = other.gameObject.GetComponent<FireGround>();
+         OnHitFireGround(fireGround);
+      }
+      if (other.gameObject.CompareTag("CubeBlock"))
+      {
+         var block = other.gameObject.GetComponent<CubeBlock>();
+         OnHitCubeBlock(block);
+      }
      
+   }
+
+   private void OnHitCubeBlock(CubeBlock block)
+   {
+      if (block.canHit)
+      {
+         block.OnHit();
+         RemoveCubes(block.height);
+      }
+   }
+
+   private void OnHitFireGround(FireGround fireGround)
+   {
+      if (fireGround.canHit)
+      {
+         fireGround.OnHit();
+         RemoveCubes(1);
+      }
    }
 
    private void OnCollectSpeedBoost(SpeedBoost boost)
    {
-      boost.OnCollect();
-      boostDuration = boost.duration;
-      feverMode = true;
-      playerMovement.SetSpeed(12f);
+      if (boost.canCollect)
+      {
+         boost.OnCollect();
+         boostDuration = boost.duration;
+         feverMode = true;
+         playerMovement.SetSpeed(12f);
+      }
    }
-
+   
    private void OnPassRandomGate(RandomGate gate)
    {
-      if (gate.canPass)
+      if (gate.canCollect)
       {
          gate.OnCollect();
          List<Cube> currentCubes = new List<Cube>();
@@ -144,9 +183,10 @@ public class PlayerController : ControllerBaseModel
          MatchCheck();
       }
    }
+   
    private void OnPassOrderGate(OrderGate gate)
    {
-      if (gate.canPass)
+      if (gate.canCollect)
       {
          gate.OnCollect();
          int totalBlue = 0, totalOrange = 0, totalPurple = 0;
@@ -188,8 +228,7 @@ public class PlayerController : ControllerBaseModel
          MatchCheck();
       }
    }
-  
-
+   
    private void OnTriggerCube(Cube cube)
    {
       if (cube.canCollect)
@@ -205,7 +244,7 @@ public class PlayerController : ControllerBaseModel
          MatchCheck();
       }
    }
-
+   
    private void RemoveCubes(int count)
    {
       int removedCubeCounter = 0;
@@ -222,6 +261,7 @@ public class PlayerController : ControllerBaseModel
       }
       cubes.RemoveRange(cubes.Count - count, count);
    }
+   
    private void MatchCheck()
    {
       for (int i = 0; i < cubes.Count - 2; i++)
@@ -243,12 +283,14 @@ public class PlayerController : ControllerBaseModel
                {
                   if (i <= x)
                   {
-                     cubes[x].AddVector3ToPosition( new Vector3(0,  3 * cubes[x].heightOffset, 0));
+                     cubes[x].AddVector3ToPosition(new Vector3(0, 3 * cubes[x].heightOffset, 0));
                   }
                }
                MatchCheck();
+               
             }
          }
       }
    }
+   
 }
