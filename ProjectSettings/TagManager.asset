@@ -11,6 +11,8 @@ TagManager:
   - SpeedBoost
   - CubeBlock
   - FireGround
+  - RampRoad
+  - JumpRamp
   layers:
   - Default
   - TransparentFX

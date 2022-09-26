@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Dreamteck.Splines;
 using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -10,6 +11,7 @@ public class PlayerController : ControllerBaseModel
 {
    [SerializeField] private PlayerModel playerModel;
    [SerializeField] private PlayerMovement playerMovement;
+   [SerializeField] private SplineFollower splineFollower;
    [SerializeField] private List<Cube> cubes;
    private bool feverMode;
    private float boostDuration;
@@ -59,16 +61,7 @@ public class PlayerController : ControllerBaseModel
          playerMovement.SetSpeed(7);
       }
    }
-
-   private void OnCollisionEnter(Collision other)
-   {
-      if (other.gameObject.CompareTag("Cube"))
-      {
-         var cube = other.gameObject.GetComponent<Cube>();
-         OnTriggerCube(cube);
-      }
-   }
-
+   
    private void OnTriggerEnter(Collider other)
    {
       if (other.gameObject.CompareTag("Cube"))
@@ -103,9 +96,40 @@ public class PlayerController : ControllerBaseModel
          var block = other.gameObject.GetComponent<CubeBlock>();
          OnHitCubeBlock(block);
       }
-     
+
+      if (other.gameObject.CompareTag("RampRoad") || other.gameObject.CompareTag("JumpRamp"))
+      {
+         var road = other.gameObject.GetComponent<Ramp>();
+         OnTriggerRamp(road);
+      }
+      
    }
 
+   private void OnTriggerRamp(Ramp ramp)
+   {
+      if (ramp.canTrig)
+      {
+         StopMove();
+         ramp.OnTriggerRoad();
+         splineFollower.spline = ramp.splineComputer;
+         splineFollower.followSpeed = ramp.speed;
+         splineFollower.motion.offset = new Vector2(0, cubes.Count * 1.5f + 1.2f);
+         splineFollower.startPosition = 0;
+         splineFollower.Restart();
+         splineFollower.RebuildImmediate();
+         splineFollower.follow = true;
+         
+      }
+   }
+
+   public void OnExitRamp()
+   {
+      splineFollower.follow = false;
+      var playerModelTransform = playerModel.transform;
+      playerModelTransform.localPosition = new Vector3(playerModelTransform.position.x, cubes.Count * 1.5f,
+         playerModelTransform.position.z);
+      StartMove();
+   }
    private void OnHitCubeBlock(CubeBlock block)
    {
       if (block.canHit)
