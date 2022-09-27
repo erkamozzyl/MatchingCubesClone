@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class RandomGate : Gate
 {
-    public override void OnCollect()
+    public override void OnPass()
     {
-        canCollect = false;
+        canPass = false;
     }
 }

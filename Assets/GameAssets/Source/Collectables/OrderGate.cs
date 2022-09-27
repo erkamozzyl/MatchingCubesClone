@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class OrderGate : Gate
 {
-    public override void OnCollect()
+    public override void OnPass()
     {
-        canCollect = false;
+        canPass = false;
     }
 }

@@ -187,9 +187,9 @@ public class PlayerController : ControllerBaseModel
    
    private void OnPassRandomGate(RandomGate gate)
    {
-      if (gate.canCollect)
+      if (gate.canPass)
       {
-         gate.OnCollect();
+         gate.OnPass();
          List<Cube> currentCubes = new List<Cube>();
          currentCubes.AddRange(cubes);
          int totalBlue = 0, totalOrange = 0, totalPurple = 0;
@@ -237,9 +237,9 @@ public class PlayerController : ControllerBaseModel
    
    private void OnPassOrderGate(OrderGate gate)
    {
-      if (gate.canCollect)
+      if (gate.canPass)
       {
-         gate.OnCollect();
+         gate.OnPass();
          int totalBlue = 0, totalOrange = 0, totalPurple = 0;
          for (int i = 0; i < cubes.Count; i++)
          {

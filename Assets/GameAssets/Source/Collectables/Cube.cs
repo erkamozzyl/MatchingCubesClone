@@ -5,12 +5,24 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Cube : CollectableBaseModel
+public class Cube : ObjectModel
 {
+    public int id;
     public int colorId;
+    public bool canCollect;
+    public GameObject parentObject;
     public float heightOffset;
     [SerializeField] private Renderer renderer;
     [SerializeField] private List<Material> materials;
+    public CubeItemDataModel GetData()
+    {
+        CubeItemDataModel dataModel = new CubeItemDataModel();
+        dataModel.id = id;
+        dataModel.position = parentObject.transform.position;
+        dataModel.rotation = parentObject.transform.rotation;
+        dataModel.colorID = colorId;
+        return dataModel;
+    }
 
     private void Start()
     {
@@ -39,7 +51,7 @@ public class Cube : CollectableBaseModel
         }
     }
 
-    public override void OnCollect()
+    public  void OnCollect()
     {
         if (canCollect)
         {
