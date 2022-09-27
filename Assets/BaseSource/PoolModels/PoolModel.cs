@@ -3,59 +3,112 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 public class PoolModel : ObjectModel
 {
-    [SerializeField] List<ObjectModel> items;
+    public List<GameObject> Items;
+    public int ItemCount;
+    public bool GetChildsOnOnInit;
 
-    public virtual T GetDeactiveItem<T>()
+    public  void Initialize()
     {
-        for (int i = 0; i < items.Count; i++)
+        if (Items == null)
+            Items = new List<GameObject>();
+
+        if (GetChildsOnOnInit)
+            GetItemsFromChilds();
+
+        ItemCount = Items.Count;
+
+      //  InitializeItems();
+
+     
+    }
+
+    protected virtual void InitializeItems()
+    {
+        foreach (var item in Items)
         {
-            if (items[i].gameObject.activeInHierarchy == false)
+            //   item.Initialize();
+        }
+    }
+
+    public virtual GameObject GetDeactiveItem()
+    {
+        for (int i = 0; i < Items.Count; i++)
+        {
+            if (Items[i].gameObject.activeInHierarchy == false)
             {
-                return (T) ((object) items[i]);
+                return Items[i];
             }
         }
 
-        return default(T);
+        return null;
     }
 
-    private void getItemsFromChilds()
+    public virtual void SetDeactiveItems()
     {
-        if (items == null)
-            items = new List<ObjectModel>();
+        foreach (var item in Items)
+        {
+            item.SetActive(false);
+        }
+    }
+
+    protected virtual void GetItemsFromChilds()
+    {
+        if (Items == null)
+            Items = new List<GameObject>();
 
         for (int i = 0; i < transform.childCount; i++)
         {
-            ObjectModel item = transform.GetChild(i).GetComponent<ObjectModel>();
+            GameObject item = transform.GetChild(i).GetComponent<GameObject>();
             if (item != null)
             {
-                if (item.HasComponent<ItemModel>())
-                    item.GetComponent<ItemModel>().id = item.transform.parent.GetSiblingIndex();
-                item.SetDeactive();
-                items.Add(item);
+                Items.Add(item);
             }
         }
     }
 
-  
-    public void InitializeOnEditor()
+    public void GetItemsEditor()
     {
 #if UNITY_EDITOR
         Undo.RecordObject(this, "GetItems");
-        if (items != null)
-            items.Clear();
+        if (Items != null)
+            Items.Clear();
 
-        getItemsFromChilds();
+        GetItemsFromChilds();
 #endif
     }
 
-    private void Reset()
+    public void SetActiveWithPos(Vector3 pos)
     {
-        transform.ResetLocal();
+        GameObject item = GetDeactiveItem();
+
+        if (item != null)
+        {
+            item.transform.position = pos;
+            item.SetActive(true);
+        }
     }
 }
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(PoolModel))]
+public class PoolModelEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+
+        if (GUILayout.Button("Get Items"))
+        {
+            ((PoolModel)target).GetItemsEditor();
+        }
+    }
+}
+
+#endif

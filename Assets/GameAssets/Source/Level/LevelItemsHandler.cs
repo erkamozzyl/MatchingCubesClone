@@ -37,24 +37,5 @@ public class LevelItemsHandler : MonoBehaviour
       Gate,
       Ramp
    }
-   /*public GameObject GetCollectable(int id)
-   {
-      return collectables.GetDeactiveItem<GameObject>(id);
-   }
-   public GameObject GetObstacle(int id)
-   {
-      return obstacles.GetDeactiveItem<GameObject>(id);
-   } 
-   public GameObject GetCube(int id)
-   {
-      return cubes.GetDeactiveItem<GameObject>(id);
-   }
-   public GameObject GetGate(int id)
-   {
-      return gates.GetDeactiveItem<GameObject>(id);
-   }
-   public GameObject GetRamp(int id)
-   {
-      return ramps.GetDeactiveItem<GameObject>(id);
-   }*/
+ 
 }

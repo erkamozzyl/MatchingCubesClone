@@ -4,33 +4,39 @@ using UnityEngine;
 
 public class MultiplePoolModel : ObjectModel
 {
-    public List<PoolModel> SubPools => pools;
-    [SerializeField] List<PoolModel> pools;
+    public List<PoolModel> Pools;
+    [HideInInspector] public int Index;
 
-    public virtual T GetDeactiveItem<T>(int poolIndex)
+    public  void Initialize()
     {
-        return pools[poolIndex].GetDeactiveItem<T>();
-    }
-
-    public virtual T GetRandomPoolItem<T>()
-    {
-        return pools.GetRandom().GetDeactiveItem<T>();
-    }
-
-    
-    public void GetPools()
-    {
-        pools.Clear();
-        for (int i = 0; i < transform.childCount; i++)
+        foreach (var item in Pools)
         {
-            PoolModel pool = transform.GetChild(i).GetComponent<PoolModel>();
-            if (pool != null)
-            {
-                pools.Add(pool);
-                
-            }
+            item.Initialize();
+        }
+    }
+    public GameObject GetRandomDeactiveItem()
+    {
+        int index = Random.Range(0, Pools.Count);
+        return Pools[index].GetDeactiveItem();
+    }
+    public T GetDeactiveItem<T>(int index)
+    {
+        return (T)(object)Pools[index].GetDeactiveItem();
+    }
+
+    public GameObject GetLinearDeactiveItem()
+    {
+        GameObject model = Pools[Index].GetDeactiveItem();
+        Index = (Index + 1 < Pools.Count) ? Index + 1 : 0;
+        return model;
+    }
+
+    public void ResetPool()
+    {
+        foreach (var item in Pools)
+        {
+            item.SetDeactiveItems();
         }
     }
 
-  
 }

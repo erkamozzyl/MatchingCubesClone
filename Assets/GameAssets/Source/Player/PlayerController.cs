@@ -9,6 +9,7 @@ using Random = UnityEngine.Random;
 
 public class PlayerController : ControllerBaseModel
 {
+   [SerializeField] private StateMachineMono stateMachine;
    [SerializeField] private PlayerModel playerModel;
    [SerializeField] private PlayerMovement playerMovement;
    [SerializeField] private SplineFollower splineFollower;
@@ -28,27 +29,17 @@ public class PlayerController : ControllerBaseModel
       playerMovement.Move();
    }
 
-   private void StopMove()
+   public void StopMove()
    {
       playerMovement.Stop();
    }
    
    private void Update()
    {
-      if (Input.GetKeyDown(KeyCode.A))
-      {
-         RemoveCubes(1);
-      }
-      if (Input.GetKeyDown(KeyCode.B))
-      {
-         RemoveCubes(2);
-      }
-
       if (feverMode)
       {
          OnFeverMode();
       }
-      
    }
 
    private void OnFeverMode()
@@ -104,12 +95,17 @@ public class PlayerController : ControllerBaseModel
          var road = other.gameObject.GetComponent<Ramp>();
          OnTriggerRamp(road);
       }
+
+      if (other.gameObject.CompareTag("Finish"))
+      {
+         stateMachine.ChangeState(2);
+      }
       
    }
 
-   private void SetTrailParticle()
+   private void SetTrailParticle(bool isActive)
    {
-      if (cubes.Count < 1)
+      if (cubes.Count < 1 || !isActive)
       {
          colorTrail.Stop();
       }
@@ -128,7 +124,11 @@ public class PlayerController : ControllerBaseModel
                break;
          }
          colorTrail.transform.localPosition = cubes[^1].transform.localPosition + new Vector3(0, -.75f, 0);
-         colorTrail.Play();
+         if (isActive)
+         {
+            colorTrail.Play();
+         }
+         
       }
    }
    private void OnTriggerRamp(Ramp ramp)
@@ -143,6 +143,10 @@ public class PlayerController : ControllerBaseModel
          splineFollower.startPosition = 0;
          splineFollower.Restart();
          splineFollower.RebuildImmediate();
+         if (ramp.id == 1)
+         {
+            colorTrail.Stop();
+         }
          splineFollower.follow = true;
          
       }
@@ -155,6 +159,7 @@ public class PlayerController : ControllerBaseModel
       playerModelTransform.localPosition = new Vector3(playerModelTransform.position.x, cubes.Count * 1.5f,
          playerModelTransform.position.z);
       StartMove();
+      SetTrailParticle(true);
    }
    private void OnHitCubeBlock(CubeBlock block)
    {
@@ -162,6 +167,10 @@ public class PlayerController : ControllerBaseModel
       {
          block.OnHit();
          RemoveCubes(block.height);
+         if (feverMode)
+         {
+            block.parentObject.SetActive(false);
+         }
       }
    }
 
@@ -182,6 +191,7 @@ public class PlayerController : ControllerBaseModel
          boostDuration = boost.duration;
          feverMode = true;
          playerMovement.SetSpeed(12f);
+         
       }
    }
    
@@ -231,7 +241,6 @@ public class PlayerController : ControllerBaseModel
             currentCubes.Remove(targetCube);
          }
          MatchCheck();
-         SetTrailParticle();
       }
    }
    
@@ -277,7 +286,6 @@ public class PlayerController : ControllerBaseModel
             targetCube.Initialize();
          }
          MatchCheck();
-         SetTrailParticle();
       }
    }
    
@@ -293,27 +301,38 @@ public class PlayerController : ControllerBaseModel
          {
             cubes[i].ScaleAnimation(i/15f,1.5f);
          }
-         SetTrailParticle();
+         SetTrailParticle(true);
          MatchCheck();
       }
    }
    
    private void RemoveCubes(int count)
    {
+      SetTrailParticle(false);
       int removedCubeCounter = 0;
-      for (int j = cubes.Count - 1; j >= 0 ; j--)
+      if (!feverMode)
       {
-         if (removedCubeCounter < count)
+         if (cubes.Count >= count)
          {
-            cubes[j].ScaleAnimation(0,() =>
+            for (int j = cubes.Count - 1; j >= 0 ; j--)
             {
-               playerModel.AddVector3ToPosition(new Vector3(0, -1.5f, 0));
-            });
-            removedCubeCounter += 1;
-         }
+               if (removedCubeCounter < count)
+               {
+                  cubes[j].ScaleAnimation(0,() =>
+                  {
+                     playerModel.AddVector3ToPosition(new Vector3(0, -1.5f, 0));
+                     SetTrailParticle(true);
+                  });
+                  removedCubeCounter += 1;
+               }
+            }
+            cubes.RemoveRange(cubes.Count - count, count);
+         }else
+            stateMachine.ChangeState(3);
       }
-      cubes.RemoveRange(cubes.Count - count, count);
-      SetTrailParticle();
+      
+     
+      
    }
    
    private void MatchCheck()
@@ -325,11 +344,13 @@ public class PlayerController : ControllerBaseModel
          {
             if (targetCubeColor == cubes[i + 2].colorId)
             {
+               SetTrailParticle(false);
                for (int j = i; j < 3 + i; j++)
                {
                   cubes[j].ScaleAnimation(0,() =>
                   {
                      playerModel.AddVector3ToPosition(new Vector3(0, -1.5f, 0));
+                     SetTrailParticle(true);
                   });
                }
                cubes.RemoveRange(i, 3);
@@ -341,7 +362,6 @@ public class PlayerController : ControllerBaseModel
                   }
                }
                MatchCheck();
-               SetTrailParticle();
             }
          }
       }
