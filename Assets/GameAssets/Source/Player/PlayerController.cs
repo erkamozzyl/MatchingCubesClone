@@ -13,8 +13,10 @@ public class PlayerController : ControllerBaseModel
    [SerializeField] private PlayerModel playerModel;
    [SerializeField] private PlayerMovement playerMovement;
    [SerializeField] private SplineFollower splineFollower;
-   [SerializeField] private List<Cube> cubes;
+ 
    [SerializeField] private ParticleSystem colorTrail;
+   [SerializeField] private CubeHandler cubeHandler;
+   
    
    private bool feverMode;
    private float boostDuration;
@@ -103,15 +105,19 @@ public class PlayerController : ControllerBaseModel
       
    }
 
+   private void OnTriggerCube(Cube cube)
+   {
+      cubeHandler.OnTriggerCube(cube,playerModel);
+   }
    private void SetTrailParticle(bool isActive)
    {
-      if (cubes.Count < 1 || !isActive)
+      if (cubeHandler.cubes.Count < 1 || !isActive)
       {
          colorTrail.Stop();
       }
       else
       {
-         switch (cubes[^1].colorId)
+         switch (cubeHandler.cubes[^1].colorId)
          {
             case 0:
                colorTrail.SetStartColor(new Color32(47, 150, 243, 255));
@@ -123,7 +129,7 @@ public class PlayerController : ControllerBaseModel
                colorTrail.SetStartColor(new Color32(173, 35, 255, 255));
                break;
          }
-         colorTrail.transform.localPosition = cubes[^1].transform.localPosition + new Vector3(0, -.75f, 0);
+         colorTrail.transform.localPosition = cubeHandler.cubes[^1].transform.localPosition + new Vector3(0, -.75f, 0);
          if (isActive)
          {
             colorTrail.Play();
@@ -139,7 +145,7 @@ public class PlayerController : ControllerBaseModel
          ramp.OnTriggerRoad();
          splineFollower.spline = ramp.splineComputer;
          splineFollower.followSpeed = ramp.speed;
-         splineFollower.motion.offset = new Vector2(0, cubes.Count * 1.5f + 1.2f);
+         splineFollower.motion.offset = new Vector2(0, cubeHandler.cubes.Count * 1.5f + 1.2f);
          splineFollower.startPosition = 0;
          splineFollower.Restart();
          splineFollower.RebuildImmediate();
@@ -156,7 +162,7 @@ public class PlayerController : ControllerBaseModel
    {
       splineFollower.follow = false;
       var playerModelTransform = playerModel.transform;
-      playerModelTransform.localPosition = new Vector3(playerModelTransform.position.x, cubes.Count * 1.5f,
+      playerModelTransform.localPosition = new Vector3(playerModelTransform.position.x, cubeHandler.cubes.Count * 1.5f,
          playerModelTransform.position.z);
       StartMove();
       SetTrailParticle(true);
@@ -166,7 +172,7 @@ public class PlayerController : ControllerBaseModel
       if (block.canHit)
       {
          block.OnHit();
-         RemoveCubes(block.height);
+         cubeHandler.RemoveCubes(block.height, feverMode, playerModel);
          if (feverMode)
          {
             block.parentObject.SetActive(false);
@@ -179,7 +185,7 @@ public class PlayerController : ControllerBaseModel
       if (fireGround.canHit)
       {
          fireGround.OnHit();
-         RemoveCubes(1);
+         cubeHandler.RemoveCubes(1, feverMode, playerModel);
       }
    }
 
@@ -201,7 +207,7 @@ public class PlayerController : ControllerBaseModel
       {
          gate.OnPass();
          List<Cube> currentCubes = new List<Cube>();
-         currentCubes.AddRange(cubes);
+         currentCubes.AddRange(cubeHandler.cubes);
          int totalBlue = 0, totalOrange = 0, totalPurple = 0;
          for (int i = 0; i < currentCubes.Count; i++)
          {
@@ -219,7 +225,7 @@ public class PlayerController : ControllerBaseModel
             }
          }
 
-         for (int i = 0; i < cubes.Count; i++)
+         for (int i = 0; i < cubeHandler.cubes.Count; i++)
          {
             var targetCube = currentCubes[Random.Range(0, currentCubes.Count)];
             if (totalBlue > 0)
@@ -240,7 +246,7 @@ public class PlayerController : ControllerBaseModel
             targetCube.Initialize();
             currentCubes.Remove(targetCube);
          }
-         MatchCheck();
+         cubeHandler.MatchCheck(playerModel);
       }
    }
    
@@ -250,9 +256,9 @@ public class PlayerController : ControllerBaseModel
       {
          gate.OnPass();
          int totalBlue = 0, totalOrange = 0, totalPurple = 0;
-         for (int i = 0; i < cubes.Count; i++)
+         for (int i = 0; i < cubeHandler.cubes.Count; i++)
          {
-            switch (cubes[i].colorId)
+            switch (cubeHandler.cubes[i].colorId)
             {
                case 0:
                   totalBlue += 1;
@@ -265,9 +271,9 @@ public class PlayerController : ControllerBaseModel
                   break;
             }
          }
-         for (int i = 0; i < cubes.Count; i++)
+         for (int i = 0; i < cubeHandler.cubes.Count; i++)
          {
-            var targetCube = cubes[i];
+            var targetCube = cubeHandler.cubes[i];
             if (totalBlue > 0)
             {
                --totalBlue;
@@ -285,86 +291,9 @@ public class PlayerController : ControllerBaseModel
             }
             targetCube.Initialize();
          }
-         MatchCheck();
+         cubeHandler.MatchCheck(playerModel);
       }
    }
    
-   private void OnTriggerCube(Cube cube)
-   {
-      if (cube.canCollect)
-      {
-         cube.transform.parent = playerModel.transform;
-         cube.OnCollect();
-         cubes.Add(cube);
-         playerModel.AddVector3ToPosition(new Vector3(0, cube.heightOffset, 0));
-         for (int i = 0; i < cubes.Count; i++)
-         {
-            cubes[i].ScaleAnimation(i/15f,1.5f);
-         }
-         SetTrailParticle(true);
-         MatchCheck();
-      }
-   }
-   
-   private void RemoveCubes(int count)
-   {
-      SetTrailParticle(false);
-      int removedCubeCounter = 0;
-      if (!feverMode)
-      {
-         if (cubes.Count >= count)
-         {
-            for (int j = cubes.Count - 1; j >= 0 ; j--)
-            {
-               if (removedCubeCounter < count)
-               {
-                  cubes[j].ScaleAnimation(0,() =>
-                  {
-                     playerModel.AddVector3ToPosition(new Vector3(0, -1.5f, 0));
-                     SetTrailParticle(true);
-                  });
-                  removedCubeCounter += 1;
-               }
-            }
-            cubes.RemoveRange(cubes.Count - count, count);
-         }else
-            stateMachine.ChangeState(3);
-      }
-      
-     
-      
-   }
-   
-   private void MatchCheck()
-   {
-      for (int i = 0; i < cubes.Count - 2; i++)
-      {
-         int targetCubeColor = cubes[i].colorId;
-         if (targetCubeColor == cubes[i + 1].colorId)
-         {
-            if (targetCubeColor == cubes[i + 2].colorId)
-            {
-               SetTrailParticle(false);
-               for (int j = i; j < 3 + i; j++)
-               {
-                  cubes[j].ScaleAnimation(0,() =>
-                  {
-                     playerModel.AddVector3ToPosition(new Vector3(0, -1.5f, 0));
-                     SetTrailParticle(true);
-                  });
-               }
-               cubes.RemoveRange(i, 3);
-               for (int x = 0; x < cubes.Count; x++)
-               {
-                  if (i <= x)
-                  {
-                     cubes[x].AddVector3ToPosition(new Vector3(0, 3 * cubes[x].heightOffset, 0));
-                  }
-               }
-               MatchCheck();
-            }
-         }
-      }
-   }
-   
+ 
 }

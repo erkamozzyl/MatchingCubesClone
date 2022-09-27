@@ -630,6 +630,7 @@ GameObject:
   m_Component:
   - component: {fileID: 170470895}
   - component: {fileID: 170470896}
+  - component: {fileID: 170470898}
   - component: {fileID: 170470897}
   m_Layer: 0
   m_Name: PlayerController
@@ -671,8 +672,8 @@ MonoBehaviour:
   playerModel: {fileID: 382462721}
   playerMovement: {fileID: 382462722}
   splineFollower: {fileID: 382462723}
-  cubes: []
   colorTrail: {fileID: 6142940358073748858}
+  cubeHandler: {fileID: 170470898}
 --- !u!54 &170470897
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -689,6 +690,22 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &170470898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170470894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfd1b2f2b96354c5a93a2d190fe9e9a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsActiveInHierarchy: 0
+  cubes: []
+  colorTrail: {fileID: 6142940358073748858}
+  stateMachine: {fileID: 951591988136213045}
 --- !u!1 &170805414
 GameObject:
   m_ObjectHideFlags: 0
