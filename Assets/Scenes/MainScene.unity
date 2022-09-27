@@ -630,6 +630,7 @@ GameObject:
   m_Component:
   - component: {fileID: 170470895}
   - component: {fileID: 170470896}
+  - component: {fileID: 170470899}
   - component: {fileID: 170470898}
   - component: {fileID: 170470897}
   m_Layer: 0
@@ -669,11 +670,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsActiveInHierarchy: 0
   stateMachine: {fileID: 951591988136213045}
-  playerModel: {fileID: 382462721}
   playerMovement: {fileID: 382462722}
-  splineFollower: {fileID: 382462723}
-  colorTrail: {fileID: 6142940358073748858}
-  cubeHandler: {fileID: 170470898}
+  triggerHandler: {fileID: 170470899}
+  feverMode: 0
+  boostDuration: 0
 --- !u!54 &170470897
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -706,6 +706,25 @@ MonoBehaviour:
   cubes: []
   colorTrail: {fileID: 6142940358073748858}
   stateMachine: {fileID: 951591988136213045}
+--- !u!114 &170470899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170470894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee38955b870594fba8afd1ef4dd79a25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsActiveInHierarchy: 0
+  playerController: {fileID: 170470896}
+  playerMovement: {fileID: 382462722}
+  cubeHandler: {fileID: 170470898}
+  playerModel: {fileID: 382462721}
+  splineFollower: {fileID: 382462723}
+  colorTrail: {fileID: 6142940358073748858}
 --- !u!1 &170805414
 GameObject:
   m_ObjectHideFlags: 0
@@ -1870,8 +1889,8 @@ MonoBehaviour:
   _unityOnEndReached:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 170470896}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+      - m_Target: {fileID: 170470899}
+        m_TargetAssemblyTypeName: TriggerHandler, Assembly-CSharp
         m_MethodName: OnExitRamp
         m_Mode: 1
         m_Arguments:
@@ -7837,7 +7856,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1532603310
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8210,7 +8229,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -10734,9 +10752,9 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 170470896}
-          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-          m_MethodName: StopMove
+        - m_Target: {fileID: 382462722}
+          m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
+          m_MethodName: Stop
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -10768,9 +10786,9 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 170470896}
-          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-          m_MethodName: StopMove
+        - m_Target: {fileID: 382462722}
+          m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
+          m_MethodName: Stop
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

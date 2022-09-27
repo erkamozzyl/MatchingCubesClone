@@ -30,15 +30,15 @@ public class CameraController : ControllerBaseModel
         var targetPosition = followTarget.transform.position;
         if (lockX)
         {
-            targetPosition = new Vector3(0f, targetPosition.y, targetPosition.z);
+            targetPosition.x = 0;
         }
         if (lockY)
         {
-            targetPosition = new Vector3(targetPosition.x, 0f, targetPosition.z);
+            targetPosition.y = 0;
         }
         if (lockZ)
         {
-            targetPosition = new Vector3(targetPosition.x, targetPosition.y,0f);
+            targetPosition.z = 0;
         }
 
         return targetPosition;

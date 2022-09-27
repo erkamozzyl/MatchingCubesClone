@@ -14,6 +14,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Obstacles/CubeBlock.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Collectables/RandomGate.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Collectables/SpeedBoost.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Player/TriggerHandler.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Ramps/RampRoad.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Collectables/Gate.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/GameAssets/Source/Obstacles/FireGround.cs" root0="FORCE_HIGHLIGHTING" />
@@ -68,6 +69,7 @@
       <workItem from="1664190546087" duration="16580000" />
       <workItem from="1664259964488" duration="11962000" />
       <workItem from="1664278540074" duration="577000" />
+      <workItem from="1664279372817" duration="914000" />
     </task>
     <servers />
   </component>

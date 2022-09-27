@@ -39,18 +39,7 @@ public class Cube : ObjectModel
 
     private void UpdateMaterial()
     {
-        switch (colorId)
-        {
-            case 0:
-                meshRenderer.material = materials[0];
-                break;
-            case 1:
-                meshRenderer.material = materials[1];
-                break;
-            case 2:
-                meshRenderer.material = materials[2];
-                break;
-        }
+        meshRenderer.material = materials[colorId];
     }
 
     public  void OnCollect()
