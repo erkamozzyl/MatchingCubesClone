@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using CpuStateMachine;
+using StateMachineBase;
 using UnityEngine;
 
-public class StateMachineMono : MonoBehaviour
+public class StateMachineMono : ObjectModel
 {
     [SerializeField] private List<ActHolder> stateHolder;
     private StateMachine stateMachine = new StateMachine();
@@ -17,7 +17,7 @@ public class StateMachineMono : MonoBehaviour
             Initialize();
     }
 
-    public void Initialize()
+    public override void Initialize()
     {
         states.Clear();
         for (int i = 0; i < stateHolder.Count; i++)

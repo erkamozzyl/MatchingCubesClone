@@ -1,4 +1,4 @@
-﻿namespace CpuStateMachine
+﻿namespace StateMachineBase
 {
     public class StateMachine
     {

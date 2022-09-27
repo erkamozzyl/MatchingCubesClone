@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 public class Cube : ObjectModel
 {
@@ -12,7 +13,7 @@ public class Cube : ObjectModel
     public bool canCollect;
     public GameObject parentObject;
     public float heightOffset;
-    [SerializeField] private Renderer renderer;
+    [SerializeField] private Renderer meshRenderer;
     [SerializeField] private List<Material> materials;
     public CubeItemDataModel GetData()
     {
@@ -41,13 +42,13 @@ public class Cube : ObjectModel
         switch (colorId)
         {
             case 0:
-                renderer.material = materials[0];
+                meshRenderer.material = materials[0];
                 break;
             case 1:
-                renderer.material = materials[1];
+                meshRenderer.material = materials[1];
                 break;
             case 2:
-                renderer.material = materials[2];
+                meshRenderer.material = materials[2];
                 break;
         }
     }

@@ -116,7 +116,7 @@ MonoBehaviour:
   canCollect: 1
   parentObject: {fileID: 2544786786382462228}
   heightOffset: 1.5
-  renderer: {fileID: 2544786786382462224}
+  meshRenderer: {fileID: 2544786786382462224}
   materials:
   - {fileID: 2100000, guid: adc6573b368c542ddb04e59e8b1aebba, type: 2}
   - {fileID: 2100000, guid: 0cf977a5a181a482dbe905128f399f4d, type: 2}

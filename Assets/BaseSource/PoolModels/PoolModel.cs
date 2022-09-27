@@ -14,7 +14,7 @@ public class PoolModel : ObjectModel
     public int ItemCount;
     public bool GetChildsOnOnInit;
 
-    public  void Initialize()
+    public override void Initialize()
     {
         if (Items == null)
             Items = new List<GameObject>();

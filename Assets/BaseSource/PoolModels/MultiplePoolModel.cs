@@ -7,7 +7,7 @@ public class MultiplePoolModel : ObjectModel
     public List<PoolModel> Pools;
     [HideInInspector] public int Index;
 
-    public  void Initialize()
+    public override void Initialize()
     {
         foreach (var item in Pools)
         {

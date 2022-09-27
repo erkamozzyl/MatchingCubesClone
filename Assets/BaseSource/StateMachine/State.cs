@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.PlayerLoop;
 
-namespace CpuStateMachine
+namespace StateMachineBase
 {
     public class State
     {

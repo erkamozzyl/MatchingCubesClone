@@ -13,6 +13,5 @@ public class HandlerBaseModel : ObjectModel
     private void Reset()
     {
         transform.name = GetType().Name;
-        transform.ResetLocal();
     }
 }

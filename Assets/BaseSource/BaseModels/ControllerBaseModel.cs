@@ -16,6 +16,5 @@ public class ControllerBaseModel : ObjectModel
     protected virtual void Reset()
     {
         transform.name = GetType().Name;
-        transform.ResetLocal();
     }
 }
