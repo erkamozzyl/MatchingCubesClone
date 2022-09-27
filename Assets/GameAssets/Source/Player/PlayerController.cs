@@ -13,6 +13,8 @@ public class PlayerController : ControllerBaseModel
    [SerializeField] private PlayerMovement playerMovement;
    [SerializeField] private SplineFollower splineFollower;
    [SerializeField] private List<Cube> cubes;
+   [SerializeField] private ParticleSystem colorTrail;
+   
    private bool feverMode;
    private float boostDuration;
    public override void Initialize()
@@ -105,6 +107,30 @@ public class PlayerController : ControllerBaseModel
       
    }
 
+   private void SetTrailParticle()
+   {
+      if (cubes.Count < 1)
+      {
+         colorTrail.Stop();
+      }
+      else
+      {
+         switch (cubes[^1].colorId)
+         {
+            case 0:
+               colorTrail.SetStartColor(new Color32(47, 150, 243, 255));
+               break;
+            case 1:
+               colorTrail.SetStartColor(new Color32(166, 107, 34, 255));
+               break;
+            case 2: 
+               colorTrail.SetStartColor(new Color32(173, 35, 255, 255));
+               break;
+         }
+         colorTrail.transform.localPosition = cubes[^1].transform.localPosition + new Vector3(0, -.75f, 0);
+         colorTrail.Play();
+      }
+   }
    private void OnTriggerRamp(Ramp ramp)
    {
       if (ramp.canTrig)
@@ -205,6 +231,7 @@ public class PlayerController : ControllerBaseModel
             currentCubes.Remove(targetCube);
          }
          MatchCheck();
+         SetTrailParticle();
       }
    }
    
@@ -250,6 +277,7 @@ public class PlayerController : ControllerBaseModel
             targetCube.Initialize();
          }
          MatchCheck();
+         SetTrailParticle();
       }
    }
    
@@ -265,6 +293,7 @@ public class PlayerController : ControllerBaseModel
          {
             cubes[i].ScaleAnimation(i/15f,1.5f);
          }
+         SetTrailParticle();
          MatchCheck();
       }
    }
@@ -284,6 +313,7 @@ public class PlayerController : ControllerBaseModel
          }
       }
       cubes.RemoveRange(cubes.Count - count, count);
+      SetTrailParticle();
    }
    
    private void MatchCheck()
@@ -311,7 +341,7 @@ public class PlayerController : ControllerBaseModel
                   }
                }
                MatchCheck();
-               
+               SetTrailParticle();
             }
          }
       }
